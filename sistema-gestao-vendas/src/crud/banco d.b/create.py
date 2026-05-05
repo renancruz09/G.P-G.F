@@ -1,15 +1,61 @@
 import sqlite3
+import os
 
-def inicializar_banco ():
-    conexao = sqlite3.connect('banco.db/database.db')
+# Passo 1: Inicialização (O que você já fez)
+def inicializar_banco():
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    conexao = sqlite3.connect('data/sistema.db')
     cursor = conexao.cursor()
+    cursor.execute(''' 
+        CREATE TABLE IF NOT EXISTS vendas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            produto TEXT NOT NULL,
+            quantidade INTEGER NOT NULL,
+            valor REAL NOT NULL,
+            data TEXT NOT NULL
+        )
+    ''')
+    conexao.commit()
+    conexao.close()
 
-    cursor.execute(''' CREATE TABLE IF NOT EXISTS vendas (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    produto TEXT NOT NULL,
-                    quantidade INTEGER NOT NULL,
-                    valor REAL NOT NULL,
-                    data TEXT NOT NULL
-                   )
-''')
-                
+# --- PASSO 2: FUNÇÃO DE CADASTRAR ---
+def cadastrar_venda():
+    print("\n" + "="*30)
+    print("      NOVO CADASTRO")
+    print("="*30)
+
+    # 1. Coleta de dados do usuário (Input)
+    nome_produto = input("Nome do produto: ")
+    qtd = int(input("Quantidade: "))
+    preco = float(input("Valor unitário: "))
+    data_venda = input("Data (ex: 31/03/2026): ")
+
+    try:
+        # 2. Conectar ao banco
+        conexao = sqlite3.connect('data/sistema.db')
+        cursor = conexao.cursor()
+
+        # 3. Comando SQL para Inserir (INSERT INTO)
+        # Usamos os '?' por segurança contra ataques de SQL Injection
+        sql = ''' INSERT INTO vendas (produto, quantidade, valor, data)
+                  VALUES (?, ?, ?, ?) '''
+        
+        # 4. Executar a ordem passando os dados coletados nos inputs
+        cursor.execute(sql, (nome_produto, qtd, preco, data_venda))
+
+        # 5. Salvar a alteração
+        conexao.commit()
+        print(f"\n✅ Sucesso: {nome_produto} adicionado ao sistema!")
+
+    except Exception as e:
+        print(f"\n❌ Erro ao salvar no banco: {e}")
+    
+    finally:
+        # 6. Fechar a conexão sempre
+        conexao.close()
+
+# Testando as duas funções
+if __name__ == "__main__":
+    inicializar_banco() # Garante que a tabela existe
+    cadastrar_venda()   # Testa o seu novo cadastro     
