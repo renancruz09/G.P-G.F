@@ -37,7 +37,7 @@ def cadastrar_venda():
         cursor = conexao.cursor()
 
         # 3. Comando SQL para Inserir 
-        sql = ''' INSERT INTO vendas (produto, quantidade, valor, data) VALUES (?, ?, ?, ?) '''
+        sql = ''' INSERT INTO vendas (produto, quantidade, valor, data) '''
         
         # 4. Executar a ordem passando os dados coletados nos inputs
         cursor.execute(sql, (nome_produto, qtd, preco, data_venda))
