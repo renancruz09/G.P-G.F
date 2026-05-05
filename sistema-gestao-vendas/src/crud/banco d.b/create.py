@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-# Passo 1: Inicialização (O que você já fez)
+# --- Inicialização ---
 def inicializar_banco():
     if not os.path.exists('data'):
         os.makedirs('data')
@@ -19,27 +19,25 @@ def inicializar_banco():
     conexao.commit()
     conexao.close()
 
-# --- PASSO 2: FUNÇÃO DE CADASTRAR ---
+# --- FUNÇÃO DE CADASTRAR ---
 def cadastrar_venda():
     print("\n" + "="*30)
     print("      NOVO CADASTRO")
     print("="*30)
 
-    # 1. Coleta de dados do usuário (Input)
+    # 1. Coleta de dados do usuário
     nome_produto = input("Nome do produto: ")
     qtd = int(input("Quantidade: "))
     preco = float(input("Valor unitário: "))
     data_venda = input("Data (ex: 31/03/2026): ")
 
     try:
-        # 2. Conectar ao banco
+        
         conexao = sqlite3.connect('data/sistema.db')
         cursor = conexao.cursor()
 
-        # 3. Comando SQL para Inserir (INSERT INTO)
-        # Usamos os '?' por segurança contra ataques de SQL Injection
-        sql = ''' INSERT INTO vendas (produto, quantidade, valor, data)
-                  VALUES (?, ?, ?, ?) '''
+        # 3. Comando SQL para Inserir 
+        sql = ''' INSERT INTO vendas (produto, quantidade, valor, data) VALUES (?, ?, ?, ?) '''
         
         # 4. Executar a ordem passando os dados coletados nos inputs
         cursor.execute(sql, (nome_produto, qtd, preco, data_venda))
@@ -52,10 +50,10 @@ def cadastrar_venda():
         print(f"\n❌ Erro ao salvar no banco: {e}")
     
     finally:
-        # 6. Fechar a conexão sempre
+        
         conexao.close()
 
 # Testando as duas funções
 if __name__ == "__main__":
-    inicializar_banco() # Garante que a tabela existe
-    cadastrar_venda()   # Testa o seu novo cadastro     
+    inicializar_banco() 
+    cadastrar_venda()   
